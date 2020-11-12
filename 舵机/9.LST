@@ -1,0 +1,100 @@
+C51 COMPILER V9.60.0.0   9                                                                 12/15/2019 16:58:53 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE 9
+OBJECT MODULE PLACED IN 9.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE 9.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #define nchar unsigned char
+   3          #define uint unsigned int
+   4          
+   5          sbit PWM=P1^0;
+   6          sbit key1=P3^1;
+   7          sbit key2=P3^0;
+   8          
+   9          uint count;
+  10          uint corner;
+  11          void delay(uint xms)
+  12          {
+  13   1        uint j,k;
+  14   1        for(j=xms;j>0;j--)
+  15   1          for(k=125;k>0;k--);
+  16   1      }
+  17          void Init()
+  18          {
+  19   1        TMOD=0x01;        //定时器0，工作方式1
+  20   1        TH0=0xfe;
+  21   1        TL0=0x33;      //11MHZ时0.5ms
+  22   1        IE=0x82;
+  23   1      //  EA=1;
+  24   1      //  ET0=1;
+  25   1        TR0=1;
+  26   1      }
+  27          void KeyScan()
+  28          {
+  29   1        if(key1==0)
+  30   1        {
+  31   2          delay(10);
+  32   2          if(key1==0)
+  33   2          {
+  34   3            corner++;
+  35   3            count=0;
+  36   3            if(corner==6)
+  37   3              corner=5;
+  38   3              while(!key1);
+  39   3          }
+  40   2        }
+  41   1        if(key2==0)
+  42   1        {
+  43   2          delay(10);
+  44   2          if(key2==0)
+  45   2          {
+  46   3            corner--;
+  47   3            count=0;
+  48   3            if(corner==0)
+  49   3              corner=1;
+  50   3              while(!key2);
+  51   3          }
+  52   2        }
+  53   1      }
+  54          void main()
+  55          {
+C51 COMPILER V9.60.0.0   9                                                                 12/15/2019 16:58:53 PAGE 2   
+
+  56   1        corner=1;
+  57   1        count=0;
+  58   1        Init();
+  59   1        while(1)
+  60   1        {
+  61   2          KeyScan();
+  62   2      
+  63   2        }
+  64   1      }
+  65          void Timer0()interrupt 1
+  66          {
+  67   1        TH0=0xfe;
+  68   1        TL0=0x33;
+  69   1        if(count<corner)
+  70   1          PWM=1;
+  71   1        else
+  72   1          PWM=0;
+  73   1          count=count+1;
+  74   1          count=count%40; 
+  75   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    228    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

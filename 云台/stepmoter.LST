@@ -1,0 +1,99 @@
+C51 COMPILER V9.00   STEPMOTER                                                             08/02/2019 20:20:44 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE STEPMOTER
+OBJECT MODULE PLACED IN stepmoter.OBJ
+COMPILER INVOKED BY: E:\C51\BIN\C51.EXE stepmoter.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<stepmoter.h>
+   2          #include<intrins.h>
+   3           
+   4           uchar code CCW[8]={0x08,0x0c,0x04,0x06,0x02,0x03,0x01,0x09};   //逆时钟旋转相序表
+   5           uchar code CW[8]={0x09,0x01,0x03,0x02,0x06,0x04,0x0c,0x08};    //正时钟旋转相序表
+   6          
+   7          void delaynms(uint aa)
+   8          {
+   9   1        uchar bb;
+  10   1        while(aa--)
+  11   1        {
+  12   2         for(bb=0;bb<115;bb++)     //1ms基准延时程序
+  13   2         {
+  14   3          ;
+  15   3         }
+  16   2        }
+  17   1       
+  18   1      }
+  19          void delay500us(void)
+  20          {
+  21   1        int j;
+  22   1        for(j=0;j<57;j++)
+  23   1        {
+  24   2         ;
+  25   2        }
+  26   1      }
+  27          
+  28          void beep(void)
+  29          {
+  30   1        uchar t;
+  31   1        for(t=0;t<100;t++)
+  32   1        {
+  33   2         delay500us();
+  34   2       FMQ=!FMQ;   //产生脉冲
+  35   2        }
+  36   1        FMQ=1;    //关闭蜂鸣器
+  37   1      }
+  38          
+  39          void motor_ccw(void)
+  40          {
+  41   1        uchar i,j;
+  42   1        for(j=0;j<8;j++)                 //电机旋转一周，不是外面所看到的一周，是里面的传动轮转了一周
+  43   1        {
+  44   2         if(K3==0)
+  45   2       {
+  46   3         break;   //如果K3按下，退出此循环
+  47   3       }
+  48   2       for(i=0;i<8;i++)  //旋转45度
+  49   2       {
+  50   3         P1=CCW[i];
+  51   3         delaynms(1);   //调节转速
+  52   3       }
+  53   2        }
+  54   1      }
+  55          
+C51 COMPILER V9.00   STEPMOTER                                                             08/02/2019 20:20:44 PAGE 2   
+
+  56          void motor_cw(void)
+  57          {
+  58   1        uchar i,j;
+  59   1        for(j=0;j<8;j++)
+  60   1        {
+  61   2         if(K3==0)
+  62   2       {
+  63   3         break;   //如果K3按下，退出此循环
+  64   3       }
+  65   2       for(i=0;i<8;i++)  //旋转45度
+  66   2       {
+  67   3         P1=CW[i];
+  68   3         delaynms(2);   //调节转速
+  69   3       }
+  70   2        }
+  71   1      }
+  72          
+  73          
+  74              
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    111    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,5 @@
+"STARTUP.obj",
+"test.obj",
+"stepmoter.obj",
+"server.obj" 
+TO "test" 

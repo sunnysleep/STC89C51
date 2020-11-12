@@ -1,0 +1,79 @@
+C51 COMPILER V9.00   TEST                                                                  07/28/2019 15:46:52 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE TEST
+OBJECT MODULE PLACED IN test.OBJ
+COMPILER INVOKED BY: E:\C51\BIN\C51.EXE test.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          sbit P1_0 = P1^0;       //测试口，可用可不用
+   4          sbit P1_3 = P1^3;       //输出口
+   5          
+   6          unsigned char tempbuf;  //存储接收到的信息
+   7          
+   8          /*初始化串口*/
+   9          void BlueteethInit()
+  10          {
+  11   1              SCON = 0x50;    //串口模式1，允许接收
+  12   1              TMOD = 0x20;    //T1工作模式为2，自动重装
+  13   1              PCON = 0x00;    //波特率不倍增
+  14   1      
+  15   1              REN = 1;
+  16   1      
+  17   1              TH1 = 0xfd;             //设置波特率为9600
+  18   1              TL1 = 0xfd;
+  19   1      
+  20   1              RI = 0;
+  21   1      
+  22   1              EA = 1;
+  23   1              ES = 1;
+  24   1      
+  25   1              TR1 = 1;
+  26   1      }
+  27          
+  28          void main()
+  29          {
+  30   1              BlueteethInit();
+  31   1              P1_0 = 0;
+  32   1              P1_3 = 0;
+  33   1              TI = 0;
+  34   1              while(1)
+  35   1              {
+  36   2                      if(tempbuf == 0x31)     //可以使用
+  37   2                              P1_3 = 1;
+  38   2                      if(tempbuf == 0)        //不可以使用
+  39   2                              P1_3 = 0;
+  40   2                      if(tempbuf == 'A')      //可以使用
+  41   2                              P1_3 = 1;
+  42   2                      if(tempbuf == 'B')      //可以使用
+  43   2                              P1_3 = 0;
+  44   2              }
+  45   1      }
+  46          
+  47          void Serial(void) interrupt 4
+  48          {
+  49   1              tempbuf = SBUF;
+  50   1              RI = 0; //读标志清零
+  51   1              SBUF = tempbuf; //将内容返回到手机端，可在手机查看发送的内容
+  52   1              while(!TI);
+  53   1              TI = 0; //写标志清零
+  54   1      }
+
+C51 COMPILER V9.00   TEST                                                                  07/28/2019 15:46:52 PAGE 2   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     78    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

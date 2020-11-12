@@ -1,0 +1,174 @@
+C51 COMPILER V9.00   12                                                                    08/30/2019 20:41:27 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE 12
+OBJECT MODULE PLACED IN 12.OBJ
+COMPILER INVOKED BY: E:\C51\BIN\C51.EXE 12.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h> 
+   2          #include<intrins.h>
+   3          
+   4          typedef unsigned int unint;
+   5          typedef unsigned char unchar;
+   6          
+   7          unsigned char code table[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+   8          
+   9          sbit we = P2^7; //位定义数码管位选锁存器接口
+  10          sbit du = P2^6; //位定义数码管段选锁存器接口
+  11          sbit TRIG = P1^4;
+  12          sbit ECHO = P1^5; 
+  13          
+  14          unchar flag = 0; 
+  15          
+  16          void delayed(unsigned int x);
+  17          void delay_20us(); 
+  18          void init_time();  
+  19          void display(int num); 
+  20          //void display2(unint num);
+  21          //void display2(unint num)              //测试用显示（测试能否分段）
+  22          //{
+  23          //              DigDisplay(4);
+  24          //              P0=table[num];//发送段码
+  25          //              delayed(50); //间隔一段时间扫描 
+  26          //              P0=0x00;//消隐
+  27          //}
+  28          void main()
+  29          {
+  30   1          int x; 
+  31   1          unint time_data,out_TH0,out_TL0;
+  32   1      
+  33   1          TRIG = 0; 
+  34   1      
+  35   1          while(1)
+  36   1          {
+  37   2      
+  38   2              init_time(); 
+  39   2              flag = 0;  
+  40   2      
+  41   2              TRIG = 1;    
+  42   2              delay_20us();
+  43   2              TRIG = 0;
+  44   2      
+  45   2              while(!ECHO);
+  46   2              TR0 = 1; 
+  47   2              while(ECHO); 
+  48   2              TR0 = 0; 
+  49   2      
+  50   2              out_TH0 = TH0;
+  51   2              out_TL0 = TL0;
+  52   2              out_TH0 <<= 8;  
+  53   2              time_data = out_TH0 | out_TL0; 
+  54   2              time_data /= 58; 
+  55   2           
+C51 COMPILER V9.00   12                                                                    08/30/2019 20:41:27 PAGE 2   
+
+  56   2              for(x =5; x >=0; x--)
+  57   2              {
+  58   3                              display(time_data);
+  59   3              }   
+  60   2          }
+  61   1      
+  62   1      }
+  63          
+  64          void timer0() interrupt 1 
+  65          {
+  66   1          flag=1;
+  67   1      }
+  68          
+  69          void delayed(unsigned int x) 
+  70          {
+  71   1          unsigned int i,j;
+  72   1          for(i = x; i > 0; i--)
+  73   1          {
+  74   2              for(j = 113; j >0; j--);
+  75   2          }
+  76   1      }
+  77          
+  78          void init_time()
+  79          {
+  80   1          TMOD = 0x01; 
+  81   1          TH0 = 0;
+  82   1          TL0 = 0;
+  83   1      
+  84   1          TF0 = 0; 
+  85   1          ET0 = 1; 
+  86   1          EA = 1; 
+  87   1      }
+  88                          
+  89          
+  90          void display(int num)
+  91          {
+  92   1          if(num == -1)
+  93   1          {
+  94   2                              P0 = 0xfe;//1111 1110 第一位数码管显示，注意数码管的排序，P0.0对应连接的是左边第一位数码管
+  95   2                              we = 1;//打开位选
+  96   2                              we = 0; //关闭位选
+  97   2      
+  98   2                              P0=table[8];//发送段码
+  99   2                              du = 1; //打开段选
+ 100   2                              du = 0; //关闭段选
+ 101   2                              delayed(2);//延时               
+ 102   2          }
+ 103   1          else 
+ 104   1          {
+ 105   2              unchar t;
+ 106   2              t = num / 100;
+ 107   2      
+ 108   2                              P0 = 0xfe;//1111 1110 第一位数码管显示，注意数码管的排序，P0.0对应连接的是左边第一位数码管
+ 109   2                              we = 1;//打开位选
+ 110   2                              we = 0; //关闭位选
+ 111   2      
+ 112   2                              P0=table[t];
+ 113   2                              du = 1; //打开段选
+ 114   2                              du = 0; //关闭段选
+ 115   2                              delayed(2);//延时
+ 116   2      
+ 117   2      
+C51 COMPILER V9.00   12                                                                    08/30/2019 20:41:27 PAGE 3   
+
+ 118   2              t = num/10%10; 
+ 119   2                              P0 = 0xfd;//1111 1101  只选通第二位数码管
+ 120   2                              we = 1; //打开位选
+ 121   2                              we = 0; //关闭位选
+ 122   2                              
+ 123   2                              P0=table[t]; //显示2
+ 124   2                              du = 1;//打开段选
+ 125   2                              du = 0; //关闭段选
+ 126   2                              delayed(2);//延时
+ 127   2      
+ 128   2              t = num %10;
+ 129   2                              P0 = 0xfb;// 1111 1011只选通第三位数码管
+ 130   2                              we = 1; //打开位选
+ 131   2                              we = 0; //关闭位选
+ 132   2                              
+ 133   2                              P0=table[t]; //显示3
+ 134   2                              du = 1;//打开段选
+ 135   2                              du = 0; //关闭段选
+ 136   2                              delayed(2);//延时
+ 137   2          }
+ 138   1      
+ 139   1      }
+ 140          
+ 141          void delay_20us()
+ 142          {
+ 143   1          _nop_();_nop_();_nop_();_nop_();_nop_(); 
+ 144   1          _nop_();_nop_();_nop_();_nop_();_nop_();
+ 145   1          _nop_();_nop_();_nop_();_nop_();_nop_();
+ 146   1          _nop_();_nop_();_nop_();_nop_();_nop_();
+ 147   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    270    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,184 @@
+C51 COMPILER V9.60.0.0   1                                                                 11/12/2020 18:54:19 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE 1
+OBJECT MODULE PLACED IN 1.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE 1.C OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include<reg52.h> 
+   2          #include<intrins.h>
+   3          
+   4          typedef unsigned int unint;
+   5          typedef unsigned char unchar;
+   6          
+   7          unsigned char code table[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+   8          
+   9          sbit LSA = P2^2; 
+  10          sbit LSB = P2^3;
+  11          sbit LSC = P2^4;
+  12          sbit TRIG = P1^4;
+  13          sbit ECHO = P1^5; 
+  14          
+  15          unchar flag = 0; 
+  16          
+  17          void delayed(unsigned int x);
+  18          void delay_20us(); 
+  19          void init_time();  
+  20          void display(int num); 
+  21          void DigDisplay(unint i);
+  22          void display2(unint num);
+  23          void display2(unint num)    //测试用显示（测试能否分段）
+  24          {
+  25   1          DigDisplay(4);
+  26   1          P0=table[num];//发送段码
+  27   1          delayed(50); //间隔一段时间扫描 
+  28   1          P0=0x00;//消隐
+  29   1      }
+  30          void main()
+  31          {
+  32   1          int x; 
+  33   1          unint time_data,out_TH0,out_TL0;
+  34   1      
+  35   1          TRIG = 0; 
+  36   1      
+  37   1          while(1)
+  38   1          {
+  39   2      
+  40   2              init_time(); 
+  41   2              flag = 0;  
+  42   2      
+  43   2              TRIG = 1;    
+  44   2              delay_20us();
+  45   2              TRIG = 0;
+  46   2      
+  47   2              while(!ECHO);
+  48   2              TR0 = 1; 
+  49   2              while(ECHO); 
+  50   2              TR0 = 0; 
+  51   2      
+  52   2              out_TH0 = TH0;
+  53   2              out_TL0 = TL0;
+  54   2              out_TH0 <<= 8;  
+  55   2              time_data = out_TH0 | out_TL0; 
+C51 COMPILER V9.60.0.0   1                                                                 11/12/2020 18:54:19 PAGE 2   
+
+  56   2              time_data /= 58; 
+  57   2           
+  58   2              for(x =5; x >=0; x--)
+  59   2              {
+  60   3            display(time_data);
+  61   3      //      if(time_data<10)
+  62   3      //              {
+  63   3      //          display2(1);
+  64   3      //        }
+  65   3      //      else if(time_data<20&&time_data<30)
+  66   3      //        {
+  67   3      //          display2(2);
+  68   3      //        }
+  69   3      //      else if(time_data>=30)
+  70   3      //        {
+  71   3      //          
+  72   3      //          display2(4);
+  73   3      //        }
+  74   3              }   
+  75   2          }
+  76   1      
+  77   1      }
+  78          
+  79          void timer0() interrupt 1 
+  80          {
+  81   1          flag=1;
+  82   1      }
+  83          
+  84          void delayed(unsigned int x) 
+  85          {
+  86   1          unsigned int i,j;
+  87   1          for(i = x; i > 0; i--)
+  88   1          {
+  89   2              for(j = 113; j >0; j--);
+  90   2          }
+  91   1      }
+  92          
+  93          void init_time()
+  94          {
+  95   1          TMOD = 0x01; 
+  96   1          TH0 = 0;
+  97   1          TL0 = 0;
+  98   1      
+  99   1          TF0 = 0; 
+ 100   1          ET0 = 1; 
+ 101   1          EA = 1; 
+ 102   1      }
+ 103          
+ 104          void DigDisplay(unint i)
+ 105          {
+ 106   1          switch(i)  //位选，选择点亮的数码管，
+ 107   1          {
+ 108   2            case(1):
+ 109   2              LSA=0;LSB=0;LSC=0; break;//显示第0位
+ 110   2            case(2):
+ 111   2              LSA=1;LSB=0;LSC=0; break;//显示第1位
+ 112   2            case(3):
+ 113   2              LSA=0;LSB=1;LSC=0; break;//显示第2位
+ 114   2        
+ 115   2          }
+ 116   1        }
+ 117          void display(int num)
+C51 COMPILER V9.60.0.0   1                                                                 11/12/2020 18:54:19 PAGE 3   
+
+ 118          {
+ 119   1          if(num == -1)
+ 120   1          {
+ 121   2          DigDisplay(0);
+ 122   2          P0=table[8];//发送段码
+ 123   2          delayed(100); //间隔一段时间扫描  
+ 124   2          P0=0x00;//消隐
+ 125   2          }
+ 126   1          else 
+ 127   1          {
+ 128   2              unchar t;
+ 129   2              t = num / 100;
+ 130   2      
+ 131   2          DigDisplay(3);
+ 132   2          P0=table[t];//发送段码
+ 133   2          delayed(10); //间隔一段时间扫描 
+ 134   2          P0=0x00;//消隐
+ 135   2      
+ 136   2              t = num/10%10; 
+ 137   2              DigDisplay(2);
+ 138   2          P0=table[t];//发送段码
+ 139   2          delayed(10); //间隔一段时间扫描 
+ 140   2          P0=0x00;//消隐
+ 141   2      
+ 142   2              t = num %10;
+ 143   2              DigDisplay(1);
+ 144   2          P0=table[t];//发送段码
+ 145   2          delayed(10); //间隔一段时间扫描 
+ 146   2          P0=0x00;//消隐
+ 147   2          }
+ 148   1      
+ 149   1      }
+ 150          
+ 151          void delay_20us()
+ 152          {
+ 153   1          _nop_();_nop_();_nop_();_nop_();_nop_(); 
+ 154   1          _nop_();_nop_();_nop_();_nop_();_nop_();
+ 155   1          _nop_();_nop_();_nop_();_nop_();_nop_();
+ 156   1          _nop_();_nop_();_nop_();_nop_();_nop_();
+ 157   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    356    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

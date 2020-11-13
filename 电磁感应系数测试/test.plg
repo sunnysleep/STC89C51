@@ -1,0 +1,74 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+D:\51ÎÄ¼þ¼Ð\11\test.uvproj
+Project File Date:  10/26/2019
+
+<h2>Output:</h2>
+compiling lcd.c...
+LCD.C(13): error C202: 'lcd_rs': undefined identifier
+LCD.C(14): error C202: 'lcd_e': undefined identifier
+LCD.C(15): error C202: 'lcd_rw': undefined identifier
+LCD.C(20): error C202: 'lcd_e': undefined identifier
+LCD.C(22): error C202: 'lcd_e': undefined identifier
+LCD.C(50): error C202: 'lcd_rs': undefined identifier
+LCD.C(51): error C202: 'lcd_e': undefined identifier
+LCD.C(52): error C202: 'lcd_rw': undefined identifier
+LCD.C(57): error C202: 'lcd_e': undefined identifier
+LCD.C(59): error C202: 'lcd_e': undefined identifier
+lcd.c - 10 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling lcd.c...
+compiling test.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?AD9850_RESET?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_AD9850_WR_PARREL?TEST
+Program Size: data=37.0 xdata=0 code=1506
+creating hex file from "test"...
+"test" - 0 Error(s), 2 Warning(s).
+compiling test.c...
+test.c - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?AD9850_RESET?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_AD9850_WR_PARREL?TEST
+Program Size: data=37.0 xdata=0 code=1506
+creating hex file from "test"...
+"test" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?AD9850_RESET?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_AD9850_WR_PARREL?TEST
+Program Size: data=37.0 xdata=0 code=1506
+creating hex file from "test"...
+"test" - 0 Error(s), 2 Warning(s).
+compiling test.c...
+test.c - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?AD9850_RESET?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_AD9850_WR_PARREL?TEST
+Program Size: data=37.0 xdata=0 code=1534
+creating hex file from "test"...
+"test" - 0 Error(s), 2 Warning(s).
+compiling test.c...
+test.c - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?AD9850_RESET?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_AD9850_WR_PARREL?TEST
+Program Size: data=37.0 xdata=0 code=1534
+creating hex file from "test"...
+"test" - 0 Error(s), 2 Warning(s).

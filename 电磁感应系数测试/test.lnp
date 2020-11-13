@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"lcd.obj",
+"test.obj" 
+TO "test" 
